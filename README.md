@@ -1,4 +1,4 @@
-# 🦴 SpineAI — Smart Spine 
+# 🦴 Smart Spine 
 
 > An AI-powered real-time posture monitoring system built with MediaPipe, Flask, and Firebase Firestore.
 
