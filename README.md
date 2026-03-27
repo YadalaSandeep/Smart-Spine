@@ -1,6 +1,6 @@
 # 🦴 Smart Spine 
 
-> An AI-powered real-time posture monitoring system built with MediaPipe, Flask, and Firebase Firestore.
+>Smart Spine is a real-time posture detection system that uses computer vision and machine learning to analyze a user’s sitting posture through a webcam. The system identifies good and bad posture and provides alerts when incorrect posture is detected, helping users maintain better spinal alignment during long computer sessions.
 
 ---
 
