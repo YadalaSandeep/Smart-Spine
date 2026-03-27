@@ -1,4 +1,4 @@
-# 🦴 SpineAI — Smart Spine & Bone Health Monitor
+# 🦴 SpineAI — Smart Spine 
 
 > An AI-powered real-time posture monitoring system built with MediaPipe, Flask, and Firebase Firestore.
 
@@ -110,7 +110,7 @@ Open **http://127.0.0.1:5000** in your browser.
 ## 🛠️ Tech Stack
 
 - **Backend**: Python 3.9+, Flask 2.3+
-- **AI / CV**: MediaPipe 0.10+ (`PoseLandmarker`), OpenCV
+-  CV**: MediaPipe 0.10+ (`PoseLandmarker`), OpenCV
 - **Database**: Firebase Firestore (cloud), JSON file (local fallback)
 - **Frontend**: Vanilla HTML/CSS/JS, Chart.js 4, Inter font
 
