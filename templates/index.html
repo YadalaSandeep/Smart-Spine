@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartSpine Healthcare</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;700;800&display=swap"
+    rel="stylesheet" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- MediaPipe Pose -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/pose.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/static/css/styles.css" />
+</head>
+
+<body class="theme-dark">
+  <!-- Dynamic BG Blob -->
+  <div class="bg-blob"></div>
+
+  <!-- ==================== SIDEBAR ==================== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <span class="logo-icon">🦴</span>
+        <span class="logo-text">SmartSpine</span>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#home" class="nav-btn" data-view="home"><span class="icon">🏠</span> Home</a>
+      <a href="#services" class="nav-btn" data-view="services"><span class="icon">✨</span> Services</a>
+      <a href="#monitor" class="nav-btn" data-view="monitor"><span class="icon">📷</span> Posture Monitor</a>
+      <a href="#analytics" class="nav-btn" data-view="analytics"><span class="icon">📊</span> Analytics</a>
+      <a href="#exercises" class="nav-btn" data-view="exercises"><span class="icon">🏃</span> Exercises</a>
+      <a href="#resources" class="nav-btn" data-view="resources"><span class="icon">💼</span> Health Resources</a>
+
+    </nav>
+    <div class="sidebar-footer">
+      <div id="authStatusMenu">
+        <!-- populated by JS -->
+      </div>
+    </div>
+  </aside>
+
+  <!-- ==================== MAIN CONTENT ==================== -->
+  <main class="main-content">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <h2 id="topbarTitle">Dashboard</h2>
+      </div>
+      <div class="topbar-right">
+        <span class="user-chip" id="userBadge" style="display:none;">
+          <span class="user-avatar" id="userAvatar">A</span>
+          <span class="user-name" id="userNamebadge">User</span>
+        </span>
+      </div>
+    </header>
+
+    <!-- CONTENT CONTAINER -->
+    <div class="content-scroll">
+
+      <!-- ===== VIEW: HOME ===== -->
+      <section id="view-home" class="spa-view active">
+        <div class="hero-section">
+          <h1>Medical-Grade <span class="gradient-text">Posture AI</span></h1>
+          <p>Real-time computer vision to protect your spine, monitor posture, and recommend corrective exercises.</p>
+          <div class="hero-actions">
+            <a href="#monitor" class="btn btn-primary">Start Live Monitor</a>
+            <a href="#services" class="btn btn-secondary">Explore Features</a>
+          </div>
+        </div>
+        <div class="metrics-grid mt-8">
+          <div class="metric-card">
+            <h3>Real-Time Tracking</h3>
+            <p>Advanced MediaPipe detection.</p>
+          </div>
+          <div class="metric-card">
+            <h3>Session Analytics</h3>
+            <p>Track your posture progress.</p>
+          </div>
+          <div class="metric-card">
+            <h3>Smart Alerts</h3>
+            <p>Corrective nudges instantly.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== VIEW: SERVICES ===== -->
+      <section id="view-services" class="spa-view">
+        <div class="page-header">
+          <h2>Our AI Services</h2>
+          <p>Comprehensive spine care intelligence.</p>
+        </div>
+        <div class="services-grid">
+          <a href="#monitor" class="service-card" style="text-decoration:none; color:inherit; display:block;">
+            <div class="service-icon">📷</div>
+            <h3>Live Posture Analysis</h3>
+            <p>Continuous monitoring of 33 body landmarks via webcam to detect slouching, text-neck, and shoulder
+              imbalances instantly.</p>
+          </a>
+          <a href="#analytics" class="service-card" style="text-decoration:none; color:inherit; display:block;">
+            <div class="service-icon">📊</div>
+            <h3>Progress Analytics</h3>
+            <p>Cloud-synced visual reports of your posture trends over time, tracking your good vs bad posture
+              distributions.</p>
+          </a>
+          <a href="#exercises" class="service-card" style="text-decoration:none; color:inherit; display:block;">
+            <div class="service-icon">🏃</div>
+            <h3>Personalized Exercises</h3>
+            <p>Custom stretching routines generated dynamically based on the specific posture faults detected during
+              your sessions.</p>
+          </a>
+
+        </div>
+      </section>
+
+      <!-- ===== VIEW: MONITOR ===== -->
+      <section id="view-monitor" class="spa-view">
+        <div class="monitor-layout">
+          <div class="monitor-feed glass-panel">
+            <div class="feed-header">
+              <h3>Live Camera Feed</h3>
+              <div id="monitorStatus" class="status-badge offline">Stopped</div>
+            </div>
+            <div class="video-container">
+              <video id="webcamVideo" style="position: absolute; opacity: 0; width: 1px; height: 1px; z-index: -1;"
+                autoplay playsinline muted></video>
+              <canvas id="outputCanvas" width="640" height="480"></canvas>
+              <img id="serverVideoFeed" style="display:none; width: 100%; height: auto; border-radius: 8px;" />
+              <div id="idleVideoPrompt" class="idle-prompt">
+                <p>Click Start to activate AI detection</p>
+              </div>
+            </div>
+            <div class="feed-controls">
+              <button id="btnStartDetect" class="btn btn-primary">▶ Start Detection</button>
+              <button id="btnStopDetect" class="btn btn-danger" style="display:none;">⏹ Stop & Save</button>
+              <button id="btnAntiGravity" class="btn btn-secondary">🚀 Activate Anti-Gravity Mode</button>
+            </div>
+          </div>
+          <div class="monitor-stats glass-panel">
+            <h3>Current Session</h3>
+            <div class="stat-list">
+              <div class="stat-item">
+                <span class="label">Status</span>
+                <span class="value" id="curPostureStatus">--</span>
+              </div>
+              <div class="stat-item">
+                <span class="label">Good Posture</span>
+                <span class="value text-green" id="curGoodTime">0s</span>
+              </div>
+              <div class="stat-item">
+                <span class="label">Bad Posture</span>
+                <span class="value text-red" id="curBadTime">0s</span>
+              </div>
+
+            </div>
+
+            <h3 class="mt-8">3D Spine View</h3>
+            <div id="spine3dContainer" class="spine-3d-view">
+              <!-- Three.js Canvas will be here -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== VIEW: ANALYTICS ===== -->
+      <section id="view-analytics" class="spa-view">
+        <div class="page-header flex-between">
+          <div>
+            <h2>Posture Analytics</h2>
+            <p>Your historical performance data.</p>
+          </div>
+          <button id="btnRefreshAnalytics" class="btn btn-secondary btn-sm">🔄 Refresh</button>
+        </div>
+
+        <div class="metrics-grid mb-8">
+          <div class="metric-card glass-panel">
+            <div class="m-title">Total Sessions</div>
+            <div class="m-val" id="anTotSessions">--</div>
+          </div>
+          <div class="metric-card glass-panel">
+            <div class="m-title">Avg Posture Score</div>
+            <div class="m-val text-cyan" id="anAvgScore">--%</div>
+          </div>
+          <div class="metric-card glass-panel">
+            <div class="m-title">Total Good Time</div>
+            <div class="m-val text-green" id="anGoodTime">--</div>
+          </div>
+        </div>
+
+        <div class="charts-grid mb-8">
+          <div class="chart-card glass-panel">
+            <h3>Posture Score Trend</h3>
+            <div class="chart-container">
+              <canvas id="trendChart"></canvas>
+            </div>
+          </div>
+          <div class="chart-card glass-panel">
+            <h3>Good vs Bad Balance</h3>
+            <div class="chart-container">
+              <canvas id="balanceChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-card glass-panel">
+          <h3>Recent Sessions</h3>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Score</th>
+                  <th>Good Time</th>
+                  <th>Bad Time</th>
+                  <th>Streaks</th>
+                </tr>
+              </thead>
+              <tbody id="analyticsTbody">
+                <!-- populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+
+
+      <!-- ===== VIEW: EXERCISES ===== -->
+      <section id="view-exercises" class="spa-view">
+        <div class="page-header">
+          <h2>Correction Exercises</h2>
+          <p>Personalized stretching routines for your spine.</p>
+        </div>
+        <div class="exercises-container" id="exercisesList">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- ===== VIEW: HEALTH RESOURCES ===== -->
+      <section id="view-resources" class="spa-view">
+        <div class="page-header">
+          <h2>Health Resources</h2>
+          <p>Ergonomic equipment recommendations for a healthier spine.</p>
+        </div>
+        <div class="services-grid">
+          <div class="service-card">
+            <div class="service-icon">🪑</div>
+            <h3>Ergonomic Chairs</h3>
+            <p>Look for chairs with adjustable lumbar support, seat depth, and armrests to maintain the natural curve of
+              your spine.</p>
+          </div>
+          <div class="service-card">
+            <div class="service-icon">💻</div>
+            <h3>Laptop Stands</h3>
+            <p>Elevate your screen to eye level to prevent "text neck" and reduce strain on your cervical spine.</p>
+          </div>
+          <div class="service-card">
+            <div class="service-icon">🧍</div>
+            <h3>Standing Desks</h3>
+            <p>Alternate between sitting and standing throughout the day to reduce pressure on the lower back.</p>
+          </div>
+          <div class="service-card">
+            <div class="service-icon">🦶</div>
+            <h3>Footrests</h3>
+            <p>If your feet don't firmly touch the floor, a footrest helps align your hips and knees to exactly 90
+              degrees.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== VIEW: PROFILE ===== -->
+      <section id="view-profile" class="spa-view">
+        <div class="profile-layout">
+          <div class="profile-card glass-panel">
+            <h2 class="mb-6">My Profile</h2>
+            <div class="form-group">
+              <label>Name</label>
+              <input type="text" class="form-control" id="profName" disabled>
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" class="form-control" id="profEmail" disabled>
+            </div>
+            <button id="btnLogout" class="btn btn-danger mt-4">Log Out</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== VIEW: LOGIN ===== -->
+      <section id="view-login" class="spa-view">
+        <div class="auth-container">
+          <div class="auth-card glass-panel">
+            <h2>Welcome Back</h2>
+            <p class="mb-6">Log in to view your health data</p>
+            <form id="loginForm">
+              <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="logEmail" class="form-control" required value="user@domain.com">
+              </div>
+              <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="logPwd" class="form-control" required value="password123">
+              </div>
+              <button type="submit" class="btn btn-primary w-full mt-4">Log In</button>
+            </form>
+            <p class="mt-4 text-center text-sm">Don't have an account? <a href="#signup" class="text-cyan">Sign up</a>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== VIEW: SIGNUP ===== -->
+      <section id="view-signup" class="spa-view">
+        <div class="auth-container">
+          <div class="auth-card glass-panel">
+            <h2>Create Account</h2>
+            <p class="mb-6">Start your posture journey today</p>
+            <form id="signupForm">
+              <div class="form-group">
+                <label>Name</label>
+                <input type="text" id="signName" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="signEmail" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="signPwd" class="form-control" required>
+              </div>
+              <button type="submit" class="btn btn-primary w-full mt-4">Sign Up</button>
+            </form>
+            <p class="mt-4 text-center text-sm">Already have an account? <a href="#login" class="text-cyan">Log in</a>
+            </p>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /.content-scroll -->
+  </main>
+
+  <div id="toastAlert" class="toast-alert"
+    style="display:none; position:fixed; top:20px; left:50%; transform:translateX(-50%); background-color: var(--danger); color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); z-index: 9999; animation: slideDown 0.3s ease-out;">
+    ⚠️ Bad Posture Detected! Please sit up straight.
+  </div>
+
+  <!-- JS Modules -->
+  <script src="/static/js/app.js"></script>
+  <script src="/static/js/spine3d.js"></script>
+  <script src="/static/js/posture.js"></script>
+  <script src="/static/js/dashboard.js"></script>
+  <script src="/static/js/exercises.js"></script>
+</body>
+
+</html>

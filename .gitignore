@@ -1,0 +1,38 @@
+# ── Credentials & local data ──────────────────────────
+serviceAccountKey.json
+stats.json
+
+# ── Python ────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+.eggs/
+
+# ── Virtual environments ───────────────────────────────
+venv/
+.venv/
+env/
+ENV/
+
+# ── IDEs ──────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── OS ────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Misc ──────────────────────────────────────────────
+*.log
+*.tmp
