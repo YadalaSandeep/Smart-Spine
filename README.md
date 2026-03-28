@@ -11,8 +11,7 @@
 | 📷 **Live Detection** | MediaPipe tracks 33 body landmarks via your webcam in real time |
 | 📐 **Posture Analysis** | Measures neck tilt, spine lean, and shoulder unevenness angles |
 | 🔔 **Smart Alerts** | Triggers a banner after 5 consecutive seconds of bad posture |
-| 🎯 **Posture Score** | Live % score based on good vs bad posture time |
-| 🦴 **Bone Health Index** | Composite metric weighing posture quality, duration, and streak frequency |
+| 🎯 **Posture Score** | Live % score based on good vs bad posture time | |
 | 🏃 **Exercise Guide** | Personalised exercise recommendations based on bad-posture frequency |
 | ☁️ **Cloud Sync** | Sessions saved to Firebase Firestore (falls back to local JSON) |
 | 📊 **Reports Page** | Session history with Chart.js posture-score trend and good/bad time charts |
